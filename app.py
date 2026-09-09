@@ -55,12 +55,12 @@ def process_frame():
         # ------------------------------------------------
 
         results = model.track(
-            frame,
-            persist=True,
-            tracker="bytetrack.yaml",
-            verbose=False,
-            imgsz=480,
-            conf=0.35
+        frame,
+        persist=True,
+        tracker="bytetrack.yaml",
+        verbose=False,
+        imgsz=320,
+        conf=0.25
         )
 
         result = results[0]
