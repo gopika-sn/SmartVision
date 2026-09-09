@@ -1,0 +1,56 @@
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+
+# OS files
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Windows user/system files
+ntuser.dat*
+ntuser.ini
+
+# Python / ML generated data
+scikit_learn_data/
+*.log
+
+# Output files
+Output.exe
+
+# Recordings
+recordings/*
+!recordings/.gitkeep
+
+# Temporary files
+*.tmp
+*.temp
+
+# Environment variables
+.env
+
+# Model cache
+.ultralytics/
+
+# Python build files
+build/
+dist/
+*.egg-info/
+
+# Generated event images
+events/*.jpg
+events/*.png

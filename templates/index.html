@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>SmartVision | AI Video Analytics</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+<body>
+
+<header>
+
+    <div>
+        <h1>SMARTVISION</h1>
+        <p>REAL-TIME AI VIDEO ANALYTICS</p>
+    </div>
+
+    <div class="status">
+        <span></span>
+        SYSTEM ONLINE
+    </div>
+
+</header>
+
+
+<main>
+
+    <section class="camera-card">
+
+        <div class="section-title">
+            LIVE CAMERA FEED
+        </div>
+
+        <video
+            id="video"
+            autoplay
+            playsinline
+        ></video>
+
+        <canvas
+            id="canvas"
+            style="display:none;"
+        ></canvas>
+
+        <img
+            id="output"
+            alt="SmartVision output"
+        >
+
+        <button onclick="startCamera()">
+            START CAMERA
+        </button>
+
+    </section>
+
+
+    <section class="analytics">
+
+        <h2>LIVE ANALYTICS</h2>
+
+        <div class="stats">
+
+            <div class="stat">
+                <small>TRACKED</small>
+                <strong id="tracked">0</strong>
+            </div>
+
+            <div class="stat">
+                <small>ENTERED</small>
+                <strong id="entered">0</strong>
+            </div>
+
+            <div class="stat">
+                <small>EXITED</small>
+                <strong id="exited">0</strong>
+            </div>
+
+            <div class="stat">
+                <small>ZONE A</small>
+                <strong id="zone">0</strong>
+            </div>
+
+        </div>
+
+
+        <h3>OBJECTS</h3>
+
+        <div id="objects">
+            Waiting for camera...
+        </div>
+
+
+        <h3>SECURITY EVENT</h3>
+
+        <div
+            id="alert"
+            class="alert"
+        >
+            SYSTEM NORMAL
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer>
+
+    <span>YOLO + BYTE TRACK</span>
+
+    <span>SMARTVISION</span>
+
+    <span>REAL-TIME MONITORING</span>
+
+</footer>
+
+
+<script>
+
+const video = document.getElementById("video");
+
+const canvas = document.getElementById("canvas");
+
+const output = document.getElementById("output");
+
+const context = canvas.getContext("2d");
+
+
+async function startCamera() {
+
+    try {
+
+        const stream =
+            await navigator.mediaDevices.getUserMedia({
+                video: true,
+                audio: false
+            });
+
+        video.srcObject = stream;
+
+        video.onloadedmetadata = () => {
+
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            processFrame();
+
+        };
+
+    }
+
+    catch (error) {
+
+        alert(
+            "Camera permission is required."
+        );
+
+        console.error(error);
+
+    }
+
+}
+
+
+async function processFrame() {
+
+    if (!video.videoWidth) {
+
+        requestAnimationFrame(processFrame);
+
+        return;
+
+    }
+
+
+    context.drawImage(
+        video,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    const image =
+        canvas.toDataURL(
+            "image/jpeg",
+            0.7
+        );
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/process",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        image: image
+                    })
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (data.error) {
+
+            console.error(data.error);
+
+            return;
+
+        }
+
+
+        output.src =
+            "data:image/jpeg;base64," +
+            data.image;
+
+
+        document.getElementById(
+            "tracked"
+        ).innerText = data.tracked;
+
+
+        document.getElementById(
+            "entered"
+        ).innerText = data.entered;
+
+
+        document.getElementById(
+            "exited"
+        ).innerText = data.exited;
+
+
+        document.getElementById(
+            "zone"
+        ).innerText = data.zone;
+
+
+        let objects = "";
+
+        for (
+            const name in data.objects
+        ) {
+
+            objects +=
+                `<div class="object">
+                    <span>${name.toUpperCase()}</span>
+                    <b>${data.objects[name]}</b>
+                </div>`;
+
+        }
+
+
+        document.getElementById(
+            "objects"
+        ).innerHTML =
+            objects || "No objects detected";
+
+
+        const alertBox =
+            document.getElementById(
+                "alert"
+            );
+
+
+        if (data.alert) {
+
+            alertBox.innerText =
+                "⚠ " + data.alert;
+
+            alertBox.classList.add(
+                "danger"
+            );
+
+        }
+
+        else {
+
+            alertBox.innerText =
+                "SYSTEM NORMAL";
+
+            alertBox.classList.remove(
+                "danger"
+            );
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+    }
+
+
+    requestAnimationFrame(
+        processFrame
+    );
+
+}
+
+</script>
+
+</body>
+
+</html>

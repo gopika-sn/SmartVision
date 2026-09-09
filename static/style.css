@@ -1,0 +1,695 @@
+/* =========================================================
+   SMARTVISION
+   Real-Time AI Video Analytics
+   Green / Black Futuristic Theme
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   RESET
+   --------------------------------------------------------- */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+/* ---------------------------------------------------------
+   BODY
+   --------------------------------------------------------- */
+
+body {
+    min-height: 100vh;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    color: #eafff1;
+
+    background:
+        linear-gradient(
+            rgba(0, 8, 4, 0.84),
+            rgba(0, 10, 5, 0.94)
+        ),
+        url("/static/ui_background.png");
+
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+
+    overflow-x: hidden;
+}
+
+
+/* ---------------------------------------------------------
+   HEADER
+   --------------------------------------------------------- */
+
+header {
+    height: 100px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 50px;
+
+    background:
+        rgba(2, 15, 8, 0.82);
+
+    border-bottom:
+        1px solid
+        rgba(80, 255, 150, 0.18);
+
+    backdrop-filter: blur(18px);
+}
+
+
+header h1 {
+    font-size: 30px;
+
+    font-weight: 700;
+
+    letter-spacing: 5px;
+
+    color: #f0fff5;
+
+    text-shadow:
+        0 0 18px
+        rgba(70, 255, 145, 0.18);
+}
+
+
+header p {
+    margin-top: 7px;
+
+    font-size: 10px;
+
+    font-weight: 500;
+
+    letter-spacing: 3px;
+
+    color: #55ff9a;
+}
+
+
+/* ---------------------------------------------------------
+   SYSTEM STATUS
+   --------------------------------------------------------- */
+
+.status {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 10px 16px;
+
+    border:
+        1px solid
+        rgba(80, 255, 150, 0.18);
+
+    border-radius: 20px;
+
+    background:
+        rgba(60, 255, 140, 0.05);
+
+    color: #65ffa5;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    letter-spacing: 1.5px;
+}
+
+
+.status span {
+    width: 8px;
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: #4dff91;
+
+    box-shadow:
+        0 0 8px #4dff91,
+        0 0 18px
+        rgba(77, 255, 145, 0.55);
+}
+
+
+/* ---------------------------------------------------------
+   MAIN CONTAINER
+   --------------------------------------------------------- */
+
+main {
+    width: 100%;
+
+    max-width: 1450px;
+
+    margin: 30px auto;
+
+    padding: 0 25px;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 2.2fr)
+        minmax(320px, 0.8fr);
+
+    gap: 22px;
+}
+
+
+/* ---------------------------------------------------------
+   CARDS
+   --------------------------------------------------------- */
+
+.camera-card,
+.analytics {
+    background:
+        rgba(2, 18, 9, 0.80);
+
+    border:
+        1px solid
+        rgba(80, 255, 150, 0.18);
+
+    border-radius: 14px;
+
+    backdrop-filter: blur(18px);
+
+    box-shadow:
+        0 20px 60px
+        rgba(0, 0, 0, 0.40);
+
+    overflow: hidden;
+}
+
+
+.camera-card {
+    padding: 20px;
+}
+
+
+.analytics {
+    padding: 25px;
+}
+
+
+/* ---------------------------------------------------------
+   SECTION TITLE
+   --------------------------------------------------------- */
+
+.section-title {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 16px;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    letter-spacing: 2px;
+
+    color: #69ffaa;
+}
+
+
+.section-title::before {
+    content: "";
+
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #52ff97;
+
+    box-shadow:
+        0 0 10px
+        rgba(82, 255, 151, 0.8);
+}
+
+
+/* ---------------------------------------------------------
+   VIDEO
+   --------------------------------------------------------- */
+
+video {
+    display: none;
+}
+
+
+#output {
+    display: block;
+
+    width: 100%;
+
+    height: auto;
+
+    min-height: 480px;
+
+    object-fit: contain;
+
+    background:
+        #010503;
+
+    border:
+        1px solid
+        rgba(80, 255, 150, 0.15);
+
+    border-radius: 10px;
+
+    box-shadow:
+        inset 0 0 30px
+        rgba(0, 0, 0, 0.5);
+}
+
+
+/* ---------------------------------------------------------
+   CAMERA BUTTON
+   --------------------------------------------------------- */
+
+button {
+    margin-top: 17px;
+
+    padding: 12px 24px;
+
+    border: 1px solid
+        rgba(100, 255, 165, 0.35);
+
+    border-radius: 7px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #39d978,
+            #27bd66
+        );
+
+    color: #001208;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.2px;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+
+button:hover {
+    transform: translateY(-1px);
+
+    background:
+        linear-gradient(
+            135deg,
+            #64ffa2,
+            #3cdb7a
+        );
+
+    box-shadow:
+        0 0 22px
+        rgba(70, 255, 145, 0.28);
+}
+
+
+button:active {
+    transform: translateY(0);
+}
+
+
+/* ---------------------------------------------------------
+   ANALYTICS TITLE
+   --------------------------------------------------------- */
+
+.analytics h2 {
+    font-size: 16px;
+
+    font-weight: 600;
+
+    letter-spacing: 2px;
+
+    color: #effff4;
+
+    margin-bottom: 20px;
+}
+
+
+/* ---------------------------------------------------------
+   STAT GRID
+   --------------------------------------------------------- */
+
+.stats {
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 10px;
+}
+
+
+.stat {
+    min-height: 82px;
+
+    padding: 15px;
+
+    border:
+        1px solid
+        rgba(80, 255, 150, 0.12);
+
+    border-radius: 9px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(70, 255, 145, 0.07),
+            rgba(0, 20, 10, 0.28)
+        );
+
+    transition:
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.stat:hover {
+    border-color:
+        rgba(80, 255, 150, 0.28);
+
+    transform: translateY(-2px);
+}
+
+
+.stat small {
+    display: block;
+
+    font-size: 8px;
+
+    font-weight: 600;
+
+    letter-spacing: 1.5px;
+
+    color: #829589;
+}
+
+
+.stat strong {
+    display: block;
+
+    margin-top: 8px;
+
+    font-size: 26px;
+
+    line-height: 1;
+
+    font-weight: 600;
+
+    color: #68ffa5;
+
+    text-shadow:
+        0 0 14px
+        rgba(80, 255, 150, 0.15);
+}
+
+
+/* ---------------------------------------------------------
+   SUB HEADINGS
+   --------------------------------------------------------- */
+
+.analytics h3 {
+    margin-top: 28px;
+
+    margin-bottom: 12px;
+
+    padding-bottom: 9px;
+
+    border-bottom:
+        1px solid
+        rgba(255, 255, 255, 0.06);
+
+    font-size: 9px;
+
+    font-weight: 600;
+
+    letter-spacing: 2px;
+
+    color: #68ffa5;
+}
+
+
+/* ---------------------------------------------------------
+   OBJECT LIST
+   --------------------------------------------------------- */
+
+#objects {
+    min-height: 35px;
+}
+
+
+.object {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 11px 4px;
+
+    border-bottom:
+        1px solid
+        rgba(255, 255, 255, 0.045);
+
+    font-size: 11px;
+
+    color: #b5c8ba;
+}
+
+
+.object span {
+    letter-spacing: 1px;
+}
+
+
+.object b {
+    min-width: 25px;
+
+    text-align: right;
+
+    color: #68ffa5;
+
+    font-size: 14px;
+}
+
+
+/* ---------------------------------------------------------
+   SECURITY ALERT
+   --------------------------------------------------------- */
+
+.alert {
+    padding: 13px 14px;
+
+    border:
+        1px solid
+        rgba(80, 255, 150, 0.13);
+
+    border-radius: 8px;
+
+    background:
+        rgba(60, 255, 140, 0.045);
+
+    color: #69ffa5;
+
+    font-size: 11px;
+
+    line-height: 1.5;
+
+    transition:
+        all 0.25s ease;
+}
+
+
+.alert.danger {
+    color: #ff7777;
+
+    border-color:
+        rgba(255, 75, 75, 0.40);
+
+    background:
+        rgba(255, 45, 45, 0.08);
+
+    box-shadow:
+        0 0 18px
+        rgba(255, 50, 50, 0.08);
+}
+
+
+/* ---------------------------------------------------------
+   FOOTER
+   --------------------------------------------------------- */
+
+footer {
+    width: 100%;
+
+    max-width: 1400px;
+
+    margin: 20px auto 30px;
+
+    padding: 18px 30px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    border-top:
+        1px solid
+        rgba(80, 255, 150, 0.10);
+
+    color: #607268;
+
+    font-size: 8px;
+
+    font-weight: 500;
+
+    letter-spacing: 2px;
+}
+
+
+/* ---------------------------------------------------------
+   SCROLLBAR
+   --------------------------------------------------------- */
+
+::-webkit-scrollbar {
+    width: 7px;
+}
+
+
+::-webkit-scrollbar-track {
+    background: #020805;
+}
+
+
+::-webkit-scrollbar-thumb {
+    background: #174d2c;
+
+    border-radius: 10px;
+}
+
+
+::-webkit-scrollbar-thumb:hover {
+    background: #267a45;
+}
+
+
+/* ---------------------------------------------------------
+   SELECTION
+   --------------------------------------------------------- */
+
+::selection {
+    background: rgba(70, 255, 145, 0.25);
+
+    color: #ffffff;
+}
+
+
+/* ---------------------------------------------------------
+   RESPONSIVE
+   --------------------------------------------------------- */
+
+@media (max-width: 1100px) {
+
+    main {
+        grid-template-columns: 1fr;
+    }
+
+    .analytics {
+        display: grid;
+
+        grid-template-columns:
+            1fr 1fr;
+
+        gap: 20px;
+    }
+
+    .analytics h2 {
+        grid-column: 1 / -1;
+    }
+
+    .stats {
+        grid-column: 1 / -1;
+    }
+}
+
+
+@media (max-width: 700px) {
+
+    header {
+        height: auto;
+
+        min-height: 90px;
+
+        padding: 20px;
+
+        gap: 20px;
+    }
+
+    header h1 {
+        font-size: 22px;
+
+        letter-spacing: 3px;
+    }
+
+    header p {
+        font-size: 8px;
+
+        letter-spacing: 2px;
+    }
+
+    .status {
+        padding: 8px 10px;
+
+        font-size: 8px;
+    }
+
+    main {
+        margin-top: 20px;
+
+        padding: 0 12px;
+    }
+
+    .analytics {
+        display: block;
+    }
+
+    #output {
+        min-height: 280px;
+    }
+
+    footer {
+        flex-direction: column;
+
+        gap: 10px;
+
+        text-align: center;
+    }
+}
