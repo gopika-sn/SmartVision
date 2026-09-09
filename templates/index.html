@@ -1,87 +1,84 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartVision</title>
 
-    <title>SmartVision | AI Video Analytics</title>
-
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='style.css') }}"
-    >
-
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
 
 <header>
-
     <div>
         <h1>SMARTVISION</h1>
         <p>REAL-TIME AI VIDEO ANALYTICS</p>
     </div>
 
     <div class="status">
-        <span></span>
-        SYSTEM ONLINE
+        <span></span> SYSTEM ONLINE
     </div>
-
 </header>
-
 
 <main>
 
-    <section class="camera-card">
+    <!-- CAMERA -->
+    <section class="camera-section">
 
-        <div class="section-title">
-            LIVE CAMERA FEED
+        <h2>● LIVE CAMERA FEED</h2>
+
+        <div class="camera-box">
+
+            <!-- REAL CAMERA -->
+            <video id="camera"
+                   autoplay
+                   playsinline>
+            </video>
+
+            <!-- AI PROCESSED FRAME -->
+            <img id="output"
+                 alt="SmartVision AI output">
+
+            <div id="camera-message">
+                Camera is off
+            </div>
+
         </div>
 
-        <video
-            id="video"
-            autoplay
-            playsinline
-        ></video>
-
-        <canvas
-            id="canvas"
-            style="display:none;"
-        ></canvas>
-
-        <img
-            id="output"
-            alt="SmartVision output"
-        >
-
-        <button onclick="startCamera()">
+        <button id="startBtn">
             START CAMERA
         </button>
+
+        <p id="cameraStatus"></p>
 
     </section>
 
 
+    <!-- ANALYTICS -->
     <section class="analytics">
 
         <h2>LIVE ANALYTICS</h2>
 
-        <div class="stats">
+        <div class="cards">
 
-            <div class="stat">
+            <div class="card">
                 <small>TRACKED</small>
                 <strong id="tracked">0</strong>
             </div>
 
-            <div class="stat">
+            <div class="card">
                 <small>ENTERED</small>
                 <strong id="entered">0</strong>
             </div>
 
-            <div class="stat">
+            <div class="card">
                 <small>EXITED</small>
                 <strong id="exited">0</strong>
             </div>
 
-            <div class="stat">
+            <div class="card">
                 <small>ZONE A</small>
                 <strong id="zone">0</strong>
             </div>
@@ -98,10 +95,7 @@
 
         <h3>SECURITY EVENT</h3>
 
-        <div
-            id="alert"
-            class="alert"
-        >
+        <div id="alert">
             SYSTEM NORMAL
         </div>
 
@@ -111,214 +105,217 @@
 
 
 <footer>
-
-    <span>YOLO + BYTE TRACK</span>
-
-    <span>SMARTVISION</span>
-
-    <span>REAL-TIME MONITORING</span>
-
+    YOLO26 + BYTE TRACK &nbsp; | &nbsp; SMARTVISION AI
 </footer>
 
 
 <script>
 
-const video = document.getElementById("video");
-
-const canvas = document.getElementById("canvas");
-
+const video = document.getElementById("camera");
 const output = document.getElementById("output");
+const startBtn = document.getElementById("startBtn");
+const message = document.getElementById("camera-message");
+const cameraStatus = document.getElementById("cameraStatus");
 
-const context = canvas.getContext("2d");
+const tracked = document.getElementById("tracked");
+const entered = document.getElementById("entered");
+const exited = document.getElementById("exited");
+const zone = document.getElementById("zone");
+const objects = document.getElementById("objects");
+const alertBox = document.getElementById("alert");
+
+let stream = null;
+let canvas = document.createElement("canvas");
+let processing = false;
+let running = false;
 
 
-async function startCamera() {
+startBtn.addEventListener("click", async function () {
 
     try {
 
-        const stream =
-            await navigator.mediaDevices.getUserMedia({
-                video: true,
-                audio: false
-            });
+        stream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: false
+        });
 
         video.srcObject = stream;
 
-        video.onloadedmetadata = () => {
+        video.style.display = "block";
+        message.style.display = "none";
 
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
+        startBtn.textContent = "CAMERA RUNNING";
+        cameraStatus.textContent = "Camera connected";
 
-            processFrame();
+        running = true;
 
-        };
+        processFrame();
 
-    }
-
-    catch (error) {
-
-        alert(
-            "Camera permission is required."
-        );
+    } catch (error) {
 
         console.error(error);
 
+        cameraStatus.textContent =
+            "Camera error: " + error.name;
+
+        message.textContent =
+            "Camera could not be started";
+
     }
 
-}
+});
 
 
 async function processFrame() {
 
-    if (!video.videoWidth) {
+    if (!running) return;
 
-        requestAnimationFrame(processFrame);
+    /*
+       Don't send another request while
+       the previous one is still processing.
+    */
 
-        return;
+    if (!processing && video.readyState >= 2) {
 
-    }
+        processing = true;
+
+        try {
+
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            const ctx = canvas.getContext("2d");
+
+            ctx.drawImage(
+                video,
+                0,
+                0,
+                canvas.width,
+                canvas.height
+            );
+
+            const image = canvas.toDataURL(
+                "image/jpeg",
+                0.65
+            );
+
+            const response = await fetch("/process", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    image: image
+                })
+
+            });
 
 
-    context.drawImage(
-        video,
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
+            if (response.ok) {
 
+                const data = await response.json();
 
-    const image =
-        canvas.toDataURL(
-            "image/jpeg",
-            0.7
-        );
+                /*
+                   AI result received.
+                   Put it over the live camera.
+                */
 
+                if (data.image) {
 
-    try {
+                    output.src =
+                        "data:image/jpeg;base64," +
+                        data.image;
 
-        const response =
-            await fetch(
-                "/process",
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body: JSON.stringify({
-                        image: image
-                    })
+                    output.style.display = "block";
                 }
-            );
 
 
-        const data =
-            await response.json();
+                tracked.textContent =
+                    data.tracked ?? 0;
+
+                entered.textContent =
+                    data.entered ?? 0;
+
+                exited.textContent =
+                    data.exited ?? 0;
+
+                zone.textContent =
+                    data.zone ?? 0;
 
 
-        if (data.error) {
+                if (data.objects &&
+                    Object.keys(data.objects).length > 0) {
 
-            console.error(data.error);
+                    objects.innerHTML = "";
 
-            return;
+                    for (const name in data.objects) {
 
-        }
+                        const item =
+                            document.createElement("div");
 
+                        item.textContent =
+                            name + ": " +
+                            data.objects[name];
 
-        output.src =
-            "data:image/jpeg;base64," +
-            data.image;
+                        objects.appendChild(item);
+                    }
 
-
-        document.getElementById(
-            "tracked"
-        ).innerText = data.tracked;
-
-
-        document.getElementById(
-            "entered"
-        ).innerText = data.entered;
+                }
 
 
-        document.getElementById(
-            "exited"
-        ).innerText = data.exited;
+                if (data.alert) {
 
+                    alertBox.textContent =
+                        data.alert;
 
-        document.getElementById(
-            "zone"
-        ).innerText = data.zone;
+                } else {
 
+                    alertBox.textContent =
+                        "SYSTEM NORMAL";
+                }
 
-        let objects = "";
+                cameraStatus.textContent =
+                    "AI detection active";
 
-        for (
-            const name in data.objects
-        ) {
+            } else {
 
-            objects +=
-                `<div class="object">
-                    <span>${name.toUpperCase()}</span>
-                    <b>${data.objects[name]}</b>
-                </div>`;
+                /*
+                   IMPORTANT:
+                   Even if Render's AI processing
+                   fails, the LOCAL CAMERA remains visible.
+                */
 
-        }
+                cameraStatus.textContent =
+                    "Camera active • AI processing unavailable";
 
+            }
 
-        document.getElementById(
-            "objects"
-        ).innerHTML =
-            objects || "No objects detected";
+        } catch (error) {
 
+            console.error(error);
 
-        const alertBox =
-            document.getElementById(
-                "alert"
-            );
-
-
-        if (data.alert) {
-
-            alertBox.innerText =
-                "⚠ " + data.alert;
-
-            alertBox.classList.add(
-                "danger"
-            );
+            cameraStatus.textContent =
+                "Camera active • waiting for AI";
 
         }
 
-        else {
-
-            alertBox.innerText =
-                "SYSTEM NORMAL";
-
-            alertBox.classList.remove(
-                "danger"
-            );
-
-        }
-
-    }
-
-    catch (error) {
-
-        console.error(error);
-
+        processing = false;
     }
 
 
-    requestAnimationFrame(
-        processFrame
-    );
+    /*
+       Process approximately 5 frames per second
+       instead of flooding Render.
+    */
+
+    setTimeout(processFrame, 200);
 
 }
 
 </script>
 
 </body>
-
 </html>
