@@ -8,10 +8,6 @@ It combines **YOLO** object detection with **ByteTrack** multi-object tracking t
 
 ---
 
-## 🚀 Live Demo
-
-🌐 **Live Application:**  
-https://smartvision-8dp7.onrender.com
 
 > Note: The application is hosted on Render's free tier. The service may take some time to wake up after a period of inactivity.
 
